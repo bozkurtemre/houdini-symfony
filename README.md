@@ -33,6 +33,7 @@ The bundle automatically adds these to your `.env` file:
 ```bash
 ###> houdini/houdini-symfony ###
 HOUDINI_DSN=https://your-backend.example.com/api/telemetry
+HOUDINI_API_KEY=your-api-key
 HOUDINI_SERVICE_NAME=my-app
 HOUDINI_SERVICE_VERSION=1.0.0
 ###< houdini/houdini-symfony ###
@@ -46,6 +47,9 @@ The auto-generated `config/packages/houdini.yaml`:
 houdini:
   # DSN for backend (uses environment variable by default)
   dsn: '%env(HOUDINI_DSN)%'
+  
+  # API key for backend authentication (uses environment variable by default)
+  api_key: '%env(HOUDINI_API_KEY)%'
   
   # Enable/disable telemetry collection
   enabled: true
@@ -73,7 +77,6 @@ houdini:
   http_client:
     timeout: 30
     retry_attempts: 3
-    headers: []
 ```
 
 ## Usage
@@ -97,36 +100,40 @@ namespace App\Controller;
 
 use Houdini\HoudiniBundle\Service\TelemetryService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
-class MyController extends AbstractController
+class UserController extends AbstractController
 {
-    public function myAction(TelemetryService $telemetry): Response
+    public function processUserData(TelemetryService $telemetry): Response
     {
         // Start a custom trace
-        $traceData = $telemetry->startTrace('custom.operation', [
+        $traceData = $telemetry->startTrace('user.data.processing', [
             'user_id' => $this->getUser()?->getId(),
-            'operation_type' => 'data_processing',
+            'operation_type' => 'profile_update',
         ]);
         
         try {
             // Your business logic here
-            $result = $this->processData();
+            $result = $this->updateUserProfile();
             
             // Record a custom metric
-            $telemetry->recordMetric('data.processed.count', count($result), [
-                'type' => 'user_data',
+            $telemetry->recordMetric('user.profile.updated', 1, [
+                'update_type' => 'profile_data',
+                'user_role' => $this->getUser()?->getRoles()[0] ?? 'guest',
             ]);
             
             // Finish the trace
             $telemetry->finishTrace($traceData, [
                 'success' => true,
-                'result_count' => count($result),
+                'updated_fields' => count($result),
             ]);
             
         } catch (\Exception $e) {
             // Record exception (also done automatically)
             $telemetry->recordException($e, [
                 'user_id' => $this->getUser()?->getId(),
+                'operation' => 'profile_update',
             ]);
             
             $telemetry->finishTrace($traceData, [
@@ -137,7 +144,16 @@ class MyController extends AbstractController
             throw $e;
         }
         
-        return new JsonResponse($result);
+        return new JsonResponse([
+            'status' => 'success',
+            'data' => $result
+        ]);
+    }
+    
+    private function updateUserProfile(): array
+    {
+        // Simulate profile update logic
+        return ['name' => 'Updated', 'email' => 'user@example.com'];
     }
 }
 ```
@@ -307,6 +323,7 @@ The bundle sends data to your backend in the following JSON format:
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `dsn` | string | `%env(HOUDINI_DSN)%` | Backend endpoint URL |
+| `api_key` | string | `%env(HOUDINI_API_KEY)%` | API key for backend authentication |
 | `enabled` | boolean | `true` | Enable/disable telemetry collection |
 | `service_name` | string | `%env(HOUDINI_SERVICE_NAME)%` | Service name for identification |
 | `service_version` | string | `%env(HOUDINI_SERVICE_VERSION)%` | Service version |
@@ -318,7 +335,6 @@ The bundle sends data to your backend in the following JSON format:
 | `logs.levels` | array | `['error', 'warning', 'info']` | Log levels to collect |
 | `http_client.timeout` | integer | `30` | HTTP client timeout (seconds) |
 | `http_client.retry_attempts` | integer | `3` | Number of retry attempts |
-| `http_client.headers` | array | `[]` | Additional HTTP headers |
 
 ## Architecture
 
