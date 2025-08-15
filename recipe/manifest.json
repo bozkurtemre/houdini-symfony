@@ -1,0 +1,16 @@
+{
+    "bundles": {
+        "Houdini\\HoudiniBundle\\HoudiniBundle": ["all"]
+    },
+    "copy-from-recipe": {
+        "config/": "%CONFIG_DIR%/"
+    },
+    "env": {
+        "#1": "###> houdini/houdini-symfony ###",
+        "HOUDINI_DSN": "https://your-backend.example.com/api/telemetry",
+        "HOUDINI_API_KEY": "your-secret-api-key-here",
+        "HOUDINI_SERVICE_NAME": "my-app",
+        "HOUDINI_SERVICE_VERSION": "1.0.0",
+        "#2": "###< houdini/houdini-symfony ###"
+    }
+}

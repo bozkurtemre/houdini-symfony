@@ -1,0 +1,31 @@
+houdini:
+  # DSN for backend (uses environment variable by default)
+  dsn: '%env(HOUDINI_DSN)%'
+  
+  # Enable/disable telemetry collection
+  enabled: true
+  
+  # Service identification
+  service_name: '%env(HOUDINI_SERVICE_NAME)%'
+  service_version: '%env(HOUDINI_SERVICE_VERSION)%'
+  
+  # Traces configuration
+  traces:
+    enabled: true
+    sample_rate: 1.0  # 0.0 to 1.0
+  
+  # Metrics configuration
+  metrics:
+    enabled: true
+    export_interval: 60  # seconds
+  
+  # Logs configuration
+  logs:
+    enabled: true
+    levels: ['error', 'warning', 'info']
+  
+  # HTTP client configuration
+  http_client:
+    timeout: 30
+    retry_attempts: 3
+    headers: []

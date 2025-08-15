@@ -1,0 +1,93 @@
+{
+    "name": "houdini/houdini-symfony",
+    "type": "symfony-bundle",
+    "description": "OpenTelemetry wrapper bundle for Symfony",
+    "keywords": ["opentelemetry", "telemetry", "tracing", "symfony", "houdini", "observability"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Emre Bozkurt",
+            "email": "emre75kurt@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4||^8.0",
+        "symfony/framework-bundle": "^4.4||^5.0||^6.0||^7.0",
+        "symfony/http-client": "^4.4||^5.0||^6.0||^7.0",
+        "symfony/config": "^4.4||^5.0||^6.0||^7.0",
+        "symfony/dependency-injection": "^4.4||^5.0||^6.0||^7.0",
+        "open-telemetry/api": "^1.0",
+        "open-telemetry/sdk": "^1.0",
+        "psr/log": "^1.0||^2.0||^3.0"
+    },
+    "require-dev": {
+        "doctrine/dbal": "^2.13||^3.3||^4.0",
+        "doctrine/doctrine-bundle": "^2.6",
+        "friendsofphp/php-cs-fixer": "^2.19||^3.40",
+        "phpstan/extension-installer": "^1.0",
+        "phpstan/phpstan": "1.12.5",
+        "phpstan/phpstan-phpunit": "1.4.0",
+        "phpstan/phpstan-symfony": "1.4.10",
+        "phpunit/phpunit": "^8.5.40||^9.6.21",
+        "symfony/browser-kit": "^4.4.20||^5.0.11||^6.0||^7.0",
+        "symfony/cache": "^4.4.20||^5.0.11||^6.0||^7.0",
+        "symfony/dom-crawler": "^4.4.20||^5.0.11||^6.0||^7.0",
+        "symfony/messenger": "^4.4.20||^5.0.11||^6.0||^7.0",
+        "symfony/monolog-bundle": "^3.4",
+        "symfony/phpunit-bridge": "^5.2.6||^6.0||^7.0",
+        "symfony/process": "^4.4.20||^5.0.11||^6.0||^7.0",
+        "symfony/security-core": "^4.4.20||^5.0.11||^6.0||^7.0",
+        "symfony/security-http": "^4.4.20||^5.0.11||^6.0||^7.0",
+        "symfony/twig-bundle": "^4.4.20||^5.0.11||^6.0||^7.0",
+        "symfony/yaml": "^4.4.20||^5.0.11||^6.0||^7.0",
+        "vimeo/psalm": "^4.3||^5.16.0"
+    },
+    "suggest": {
+        "monolog/monolog": "Allow sending log messages to Sentry by using the included Monolog handler.",
+        "doctrine/doctrine-bundle": "Allow distributed tracing of database queries using Sentry.",
+        "symfony/twig-bundle": "Allow distributed tracing of Twig template rendering using Sentry.",
+        "symfony/cache": "Allow distributed tracing of cache pools using Sentry."
+    },
+    "autoload": {
+        "psr-4": {
+            "Houdini\\HoudiniBundle\\": "src/"
+        },
+        "files": [
+            "src/aliases.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Houdini\\HoudiniBundle\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@phpstan",
+            "@psalm",
+            "@tests"
+        ],
+        "tests": "vendor/bin/phpunit --verbose",
+        "cs-check": "vendor/bin/php-cs-fixer fix --verbose --diff --dry-run",
+        "cs-fix": "vendor/bin/php-cs-fixer fix --verbose --diff",
+        "phpstan": "vendor/bin/phpstan analyse",
+        "psalm": "vendor/bin/psalm"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "6.4.*"
+        },
+        "symfony-recipes": {
+            "houdini/houdini-symfony": "recipe/"
+        }
+    }
+}

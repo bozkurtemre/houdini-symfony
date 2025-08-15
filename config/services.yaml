@@ -1,0 +1,53 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  # HTTP Client Service
+  houdini.http_client:
+    class: Houdini\HoudiniBundle\Service\HttpClientService
+    arguments:
+      $httpClient: '@http_client'
+      $logger: '@logger'
+      $dsn: '%houdini.dsn%'
+      $timeout: '%houdini.http_client.timeout%'
+      $retryAttempts: '%houdini.http_client.retry_attempts%'
+      $apiKey: '%houdini.api_key%'
+    tags:
+      - { name: monolog.logger, channel: houdini }
+
+  # Main Telemetry Service
+  houdini.telemetry_service:
+    class: Houdini\HoudiniBundle\Service\TelemetryService
+    public: true
+    arguments:
+      $httpClient: '@houdini.http_client'
+      $logger: '@logger'
+      $config:
+        traces: '%houdini.traces%'
+        metrics: '%houdini.metrics%'
+        logs: '%houdini.logs%'
+      $serviceName: '%houdini.service_name%'
+      $serviceVersion: '%houdini.service_version%'
+    tags:
+      - { name: monolog.logger, channel: houdini }
+
+  # Event Listeners
+  houdini.event_listener.request:
+    class: Houdini\HoudiniBundle\EventListener\RequestListener
+    arguments:
+      $telemetryService: '@houdini.telemetry_service'
+    tags:
+      - { name: kernel.event_subscriber }
+
+  houdini.event_listener.exception:
+    class: Houdini\HoudiniBundle\EventListener\ExceptionListener
+    arguments:
+      $telemetryService: '@houdini.telemetry_service'
+    tags:
+      - { name: kernel.event_subscriber }
+
+  # Service aliases for autowiring
+  Houdini\HoudiniBundle\Service\TelemetryService: '@houdini.telemetry_service'
+  Houdini\HoudiniBundle\Service\HttpClientService: '@houdini.http_client'
