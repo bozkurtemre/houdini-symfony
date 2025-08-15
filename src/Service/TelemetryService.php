@@ -66,15 +66,20 @@ final class TelemetryService
         $spanId = bin2hex(random_bytes(8));
 
         $traceData = [
-            'type' => 'trace',
-            'operation_name' => $operationName,
-            'trace_id' => $traceId,
-            'span_id' => $spanId,
-            'start_time' => microtime(true),
-            'attributes' => $attributes,
-            'service_name' => $this->serviceName,
-            'service_version' => $this->serviceVersion,
             'project_id' => $this->projectId,
+            'telemetry_data' => [
+                'type' => 'trace',
+                'operation_name' => $operationName,
+                'trace_id' => $traceId,
+                'span_id' => $spanId,
+                'start_time' => microtime(true),
+                'attributes' => $attributes,
+            ],
+            'metadata' => [
+                'service_name' => $this->serviceName,
+                'service_version' => $this->serviceVersion,
+                'timestamp' => microtime(true),
+            ],
         ];
 
         return $traceData;
@@ -100,14 +105,19 @@ final class TelemetryService
         }
 
         $metricData = [
-            'type' => 'metric',
-            'name' => $name,
-            'value' => $value,
-            'timestamp' => microtime(true),
-            'attributes' => $attributes,
-            'service_name' => $this->serviceName,
-            'service_version' => $this->serviceVersion,
             'project_id' => $this->projectId,
+            'telemetry_data' => [
+                'type' => 'metric',
+                'name' => $name,
+                'value' => $value,
+                'timestamp' => microtime(true),
+                'attributes' => $attributes,
+            ],
+            'metadata' => [
+                'service_name' => $this->serviceName,
+                'service_version' => $this->serviceVersion,
+                'timestamp' => microtime(true),
+            ],
         ];
 
         $this->collectData($metricData);
@@ -120,14 +130,19 @@ final class TelemetryService
         }
 
         $logData = [
-            'type' => 'log',
-            'level' => $level,
-            'message' => $message,
-            'timestamp' => microtime(true),
-            'context' => $context,
-            'service_name' => $this->serviceName,
-            'service_version' => $this->serviceVersion,
             'project_id' => $this->projectId,
+            'telemetry_data' => [
+                'type' => 'log',
+                'level' => $level,
+                'message' => $message,
+                'timestamp' => microtime(true),
+                'context' => $context,
+            ],
+            'metadata' => [
+                'service_name' => $this->serviceName,
+                'service_version' => $this->serviceVersion,
+                'timestamp' => microtime(true),
+            ],
         ];
 
         $this->collectData($logData);
@@ -136,17 +151,22 @@ final class TelemetryService
     public function recordException(\Throwable $exception, array $context = []): void
     {
         $exceptionData = [
-            'type' => 'exception',
-            'class' => get_class($exception),
-            'message' => $exception->getMessage(),
-            'file' => $exception->getFile(),
-            'line' => $exception->getLine(),
-            'trace' => $exception->getTraceAsString(),
-            'timestamp' => microtime(true),
-            'context' => $context,
-            'service_name' => $this->serviceName,
-            'service_version' => $this->serviceVersion,
             'project_id' => $this->projectId,
+            'telemetry_data' => [
+                'type' => 'exception',
+                'class' => get_class($exception),
+                'message' => $exception->getMessage(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'trace' => $exception->getTraceAsString(),
+                'timestamp' => microtime(true),
+                'context' => $context,
+            ],
+            'metadata' => [
+                'service_name' => $this->serviceName,
+                'service_version' => $this->serviceVersion,
+                'timestamp' => microtime(true),
+            ],
         ];
 
         $this->collectData($exceptionData);
@@ -255,15 +275,20 @@ final class TelemetryService
     public function captureMessage(string $message, string $level = 'info', array $context = []): void
     {
         $messageData = [
-            'type' => 'message',
-            'message' => $message,
-            'level' => $level,
-            'timestamp' => microtime(true),
-            'context' => $context,
-            'service_name' => $this->serviceName,
-            'service_version' => $this->serviceVersion,
             'project_id' => $this->projectId,
-            'captured_manually' => true,
+            'telemetry_data' => [
+                'type' => 'message',
+                'message' => $message,
+                'level' => $level,
+                'timestamp' => microtime(true),
+                'context' => $context,
+                'captured_manually' => true,
+            ],
+            'metadata' => [
+                'service_name' => $this->serviceName,
+                'service_version' => $this->serviceVersion,
+                'timestamp' => microtime(true),
+            ],
         ];
 
         $this->collectData($messageData);
@@ -280,18 +305,23 @@ final class TelemetryService
     public function captureError(\Throwable $error, array $context = []): void
     {
         $errorData = [
-            'type' => 'captured_error',
-            'class' => get_class($error),
-            'message' => $error->getMessage(),
-            'file' => $error->getFile(),
-            'line' => $error->getLine(),
-            'trace' => $error->getTraceAsString(),
-            'timestamp' => microtime(true),
-            'context' => $context,
-            'service_name' => $this->serviceName,
-            'service_version' => $this->serviceVersion,
             'project_id' => $this->projectId,
-            'captured_manually' => true,
+            'telemetry_data' => [
+                'type' => 'captured_error',
+                'class' => get_class($error),
+                'message' => $error->getMessage(),
+                'file' => $error->getFile(),
+                'line' => $error->getLine(),
+                'trace' => $error->getTraceAsString(),
+                'timestamp' => microtime(true),
+                'context' => $context,
+                'captured_manually' => true,
+            ],
+            'metadata' => [
+                'service_name' => $this->serviceName,
+                'service_version' => $this->serviceVersion,
+                'timestamp' => microtime(true),
+            ],
         ];
 
         $this->collectData($errorData);
@@ -315,12 +345,16 @@ final class TelemetryService
     public function captureErrorMessage(string $errorMessage, array $context = []): void
     {
         $errorData = [
-            'type' => 'captured_error_message',
-            'message' => $errorMessage,
-            'timestamp' => microtime(true),
-            'context' => $context,
-            'service_name' => $this->serviceName,
-            'service_version' => $this->serviceVersion,
+            'project_id' => $this->projectId,
+            'telemetry_data' => [
+                'type' => 'captured_error_message',
+                'message' => $errorMessage,
+                'timestamp' => microtime(true),
+                'context' => $context,
+            ],
+            'metadata' => [
+                'service_name' => $this->serviceName,
+                'service_version' => $this->serviceVersion,
             'project_id' => $this->projectId,
             'captured_manually' => true,
         ];
