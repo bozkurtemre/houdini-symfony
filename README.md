@@ -105,7 +105,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends AbstractController
 {
-    public function processUserData(TelemetryService $telemetry): Response
+    public function processUserData(TelemetryService $telemetry): JsonResponse
     {
         // Start a custom trace
         $traceData = $telemetry->startTrace('user.data.processing', [
