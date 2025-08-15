@@ -93,7 +93,7 @@ final class TelemetryService
     {
         if (!$this->config['metrics']['enabled']) {
             return;
-
+        }
 
         $metricData = [
             'type' => 'metric',
