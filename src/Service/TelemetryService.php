@@ -23,6 +23,7 @@ final class TelemetryService
     private array $config;
     private string $serviceName;
     private string $serviceVersion;
+    private string $projectId;
     private array $collectedData;
 
     public function __construct(
@@ -30,13 +31,15 @@ final class TelemetryService
         LoggerInterface $logger,
         array $config,
         string $serviceName,
-        string $serviceVersion
+        string $serviceVersion,
+        string $projectId = ''
     ) {
         $this->httpClient = $httpClient;
         $this->logger = $logger;
         $this->config = $config;
         $this->serviceName = $serviceName;
         $this->serviceVersion = $serviceVersion;
+        $this->projectId = $projectId;
         $this->collectedData = [];
 
         $this->initializeProviders();
@@ -71,6 +74,7 @@ final class TelemetryService
             'attributes' => $attributes,
             'service_name' => $this->serviceName,
             'service_version' => $this->serviceVersion,
+            'project_id' => $this->projectId,
         ];
 
         return $traceData;
@@ -103,6 +107,7 @@ final class TelemetryService
             'attributes' => $attributes,
             'service_name' => $this->serviceName,
             'service_version' => $this->serviceVersion,
+            'project_id' => $this->projectId,
         ];
 
         $this->collectData($metricData);
@@ -122,6 +127,7 @@ final class TelemetryService
             'context' => $context,
             'service_name' => $this->serviceName,
             'service_version' => $this->serviceVersion,
+            'project_id' => $this->projectId,
         ];
 
         $this->collectData($logData);
@@ -140,6 +146,7 @@ final class TelemetryService
             'context' => $context,
             'service_name' => $this->serviceName,
             'service_version' => $this->serviceVersion,
+            'project_id' => $this->projectId,
         ];
 
         $this->collectData($exceptionData);
@@ -162,6 +169,7 @@ final class TelemetryService
             'headers' => $this->sanitizeHeaders($headers),
             'service_name' => $this->serviceName,
             'service_version' => $this->serviceVersion,
+            'project_id' => $this->projectId,
         ];
 
         $this->collectData($requestData);
@@ -196,17 +204,19 @@ final class TelemetryService
 
     private function sendDataInBackground(array $data): void
     {
-        // Use a simple background approach - fork process or use async if available
-        if (function_exists('pcntl_fork')) {
-            $pid = pcntl_fork();
-            if ($pid == 0) {
-                // Child process - send data
-                $this->httpClient->postTelemetryData($data);
-                exit(0);
+        // Send each telemetry item individually as direct JSON objects
+        foreach ($data as $item) {
+            if (function_exists('pcntl_fork')) {
+                $pid = pcntl_fork();
+                if ($pid == 0) {
+                    // Child process - send individual item
+                    $this->httpClient->postTelemetryData($item);
+                    exit(0);
+                }
+            } else {
+                // Fallback: send synchronously but with reduced timeout
+                $this->httpClient->postTelemetryData($item);
             }
-        } else {
-            // Fallback: send synchronously but with reduced timeout (already handled in HttpClientService)
-            $this->httpClient->postTelemetryData($data);
         }
     }
 
@@ -252,6 +262,7 @@ final class TelemetryService
             'context' => $context,
             'service_name' => $this->serviceName,
             'service_version' => $this->serviceVersion,
+            'project_id' => $this->projectId,
             'captured_manually' => true,
         ];
 
@@ -279,6 +290,7 @@ final class TelemetryService
             'context' => $context,
             'service_name' => $this->serviceName,
             'service_version' => $this->serviceVersion,
+            'project_id' => $this->projectId,
             'captured_manually' => true,
         ];
 
@@ -309,6 +321,7 @@ final class TelemetryService
             'context' => $context,
             'service_name' => $this->serviceName,
             'service_version' => $this->serviceVersion,
+            'project_id' => $this->projectId,
             'captured_manually' => true,
         ];
 
@@ -338,6 +351,7 @@ final class TelemetryService
             'timestamp' => microtime(true),
             'service_name' => $this->serviceName,
             'service_version' => $this->serviceVersion,
+            'project_id' => $this->projectId,
         ];
 
         $this->collectData($breadcrumbData);
@@ -354,6 +368,7 @@ final class TelemetryService
             'timestamp' => microtime(true),
             'service_name' => $this->serviceName,
             'service_version' => $this->serviceVersion,
+            'project_id' => $this->projectId,
         ]);
     }
 
@@ -369,6 +384,7 @@ final class TelemetryService
             'timestamp' => microtime(true),
             'service_name' => $this->serviceName,
             'service_version' => $this->serviceVersion,
+            'project_id' => $this->projectId,
         ]);
     }
 
@@ -384,6 +400,7 @@ final class TelemetryService
             'timestamp' => microtime(true),
             'service_name' => $this->serviceName,
             'service_version' => $this->serviceVersion,
+            'project_id' => $this->projectId,
         ]);
     }
 }

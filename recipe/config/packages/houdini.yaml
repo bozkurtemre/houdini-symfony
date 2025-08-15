@@ -2,6 +2,12 @@ houdini:
   # DSN for backend (uses environment variable by default)
   dsn: '%env(HOUDINI_DSN)%'
   
+  # Project ID for telemetry identification (uses environment variable by default)
+  project_id: '%env(HOUDINI_PROJECT_ID)%'
+  
+  # API key for backend authentication (uses environment variable by default)
+  api_key: '%env(HOUDINI_API_KEY)%'
+  
   # Enable/disable telemetry collection
   enabled: true
   
@@ -27,5 +33,3 @@ houdini:
   # HTTP client configuration
   http_client:
     timeout: 30
-    retry_attempts: 3
-    headers: []

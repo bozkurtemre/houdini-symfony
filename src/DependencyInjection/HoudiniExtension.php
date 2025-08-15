@@ -11,6 +11,9 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 final class HoudiniExtension extends Extension
 {
+    /**
+     * @throws \Exception
+     */
     public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
@@ -22,6 +25,7 @@ final class HoudiniExtension extends Extension
 
         // Set configuration parameters
         $container->setParameter('houdini.dsn', $config['dsn']);
+        $container->setParameter('houdini.project_id', $config['project_id']);
         $container->setParameter('houdini.api_key', $config['api_key']);
         $container->setParameter('houdini.enabled', $config['enabled']);
         $container->setParameter('houdini.service_name', $config['service_name']);
@@ -33,8 +37,6 @@ final class HoudiniExtension extends Extension
 
         // Set individual http_client parameters for service definitions
         $container->setParameter('houdini.http_client.timeout', $config['http_client']['timeout']);
-        $container->setParameter('houdini.http_client.retry_attempts', $config['http_client']['retry_attempts']);
-        $container->setParameter('houdini.http_client.headers', $config['http_client']['headers']);
 
         // Install recipe files if they don't exist
         $this->installRecipeFiles($container);
@@ -77,7 +79,8 @@ final class HoudiniExtension extends Extension
             if (strpos($envContent, 'HOUDINI_DSN') === false) {
                 $envAddition = "\n###> houdini/houdini-symfony ###\n";
                 $envAddition .= "HOUDINI_DSN=https://your-backend.example.com/api/telemetry\n";
-                $envAddition .= "HOUDINI_API_KEY=your-api-key\n";
+                $envAddition .= "HOUDINI_PROJECT_ID=your-project-id\n";
+                $envAddition .= "HOUDINI_API_KEY=your-secret-api-key-here\n";
                 $envAddition .= "HOUDINI_SERVICE_NAME=my-app\n";
                 $envAddition .= "HOUDINI_SERVICE_VERSION=1.0.0\n";
                 $envAddition .= "###< houdini/houdini-symfony ###\n";

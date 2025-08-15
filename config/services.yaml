@@ -12,7 +12,6 @@ services:
       $logger: '@logger'
       $dsn: '%houdini.dsn%'
       $timeout: '%houdini.http_client.timeout%'
-      $retryAttempts: '%houdini.http_client.retry_attempts%'
       $apiKey: '%houdini.api_key%'
     tags:
       - { name: monolog.logger, channel: houdini }
@@ -30,6 +29,7 @@ services:
         logs: '%houdini.logs%'
       $serviceName: '%houdini.service_name%'
       $serviceVersion: '%houdini.service_version%'
+      $projectId: '%houdini.project_id%'
     tags:
       - { name: monolog.logger, channel: houdini }
 
