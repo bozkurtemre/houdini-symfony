@@ -1,5 +1,11 @@
 # Houdini Symfony Bundle
 
+[![Latest Stable Version](http://poser.pugx.org/bozkurtemre/houdini-symfony/v)](https://packagist.org/packages/bozkurtemre/houdini-symfony)
+[![Total Downloads](http://poser.pugx.org/bozkurtemre/houdini-symfony/downloads)](https://packagist.org/packages/bozkurtemre/houdini-symfony)
+[![Latest Unstable Version](http://poser.pugx.org/bozkurtemre/houdini-symfony/v/unstable)](https://packagist.org/packages/bozkurtemre/houdini-symfony)
+[![License](http://poser.pugx.org/bozkurtemre/houdini-symfony/license)](https://packagist.org/packages/bozkurtemre/houdini-symfony)
+
+
 A Symfony bundle that acts as a telemetry collection wrapper, automatically collecting telemetry data (traces, metrics, logs, exceptions) and posting them to a configurable backend via DSN configuration, similar to Sentry's approach.
 
 ## Features
