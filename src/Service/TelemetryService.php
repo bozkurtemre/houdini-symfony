@@ -72,8 +72,8 @@ final class TelemetryService
                 'operation_name' => $operationName,
                 'trace_id' => $traceId,
                 'span_id' => $spanId,
-                'start_time' => microtime(true),
                 'attributes' => $attributes,
+                'timestamp' => microtime(true),
             ],
             'metadata' => [
                 'service_name' => $this->serviceName,
@@ -110,8 +110,8 @@ final class TelemetryService
                 'type' => 'metric',
                 'name' => $name,
                 'value' => $value,
-                'timestamp' => microtime(true),
                 'attributes' => $attributes,
+                'timestamp' => microtime(true),
             ],
             'metadata' => [
                 'service_name' => $this->serviceName,
@@ -135,8 +135,8 @@ final class TelemetryService
                 'type' => 'log',
                 'level' => $level,
                 'message' => $message,
-                'timestamp' => microtime(true),
                 'context' => $context,
+                'timestamp' => microtime(true),
             ],
             'metadata' => [
                 'service_name' => $this->serviceName,
@@ -159,8 +159,8 @@ final class TelemetryService
                 'file' => $exception->getFile(),
                 'line' => $exception->getLine(),
                 'trace' => $exception->getTraceAsString(),
-                'timestamp' => microtime(true),
                 'context' => $context,
+                'timestamp' => microtime(true),
             ],
             'metadata' => [
                 'service_name' => $this->serviceName,
@@ -280,9 +280,9 @@ final class TelemetryService
                 'type' => 'message',
                 'message' => $message,
                 'level' => $level,
-                'timestamp' => microtime(true),
                 'context' => $context,
                 'captured_manually' => true,
+                'timestamp' => microtime(true),
             ],
             'metadata' => [
                 'service_name' => $this->serviceName,
@@ -313,9 +313,9 @@ final class TelemetryService
                 'file' => $error->getFile(),
                 'line' => $error->getLine(),
                 'trace' => $error->getTraceAsString(),
-                'timestamp' => microtime(true),
                 'context' => $context,
                 'captured_manually' => true,
+                'timestamp' => microtime(true),
             ],
             'metadata' => [
                 'service_name' => $this->serviceName,
@@ -349,14 +349,15 @@ final class TelemetryService
             'telemetry_data' => [
                 'type' => 'captured_error_message',
                 'message' => $errorMessage,
-                'timestamp' => microtime(true),
                 'context' => $context,
+                'captured_manually' => true,
+                'timestamp' => microtime(true),
             ],
             'metadata' => [
                 'service_name' => $this->serviceName,
                 'service_version' => $this->serviceVersion,
-            'project_id' => $this->projectId,
-            'captured_manually' => true,
+                'timestamp' => microtime(true),
+            ],
         ];
 
         $this->collectData($errorData);
@@ -377,15 +378,20 @@ final class TelemetryService
     public function captureBreadcrumb(string $message, string $category = 'default', string $level = 'info', array $data = []): void
     {
         $breadcrumbData = [
-            'type' => 'breadcrumb',
-            'message' => $message,
-            'category' => $category,
-            'level' => $level,
-            'data' => $data,
-            'timestamp' => microtime(true),
-            'service_name' => $this->serviceName,
-            'service_version' => $this->serviceVersion,
             'project_id' => $this->projectId,
+            'telemetry_data' => [
+                'type' => 'breadcrumb',
+                'message' => $message,
+                'category' => $category,
+                'level' => $level,
+                'data' => $data,
+                'timestamp' => microtime(true),
+            ],
+            'metadata' => [
+                'service_name' => $this->serviceName,
+                'service_version' => $this->serviceVersion,
+                'timestamp' => microtime(true),
+            ],
         ];
 
         $this->collectData($breadcrumbData);
@@ -397,12 +403,17 @@ final class TelemetryService
     public function setUserContext(array $userContext): void
     {
         $this->collectData([
-            'type' => 'user_context',
-            'user_data' => $userContext,
-            'timestamp' => microtime(true),
-            'service_name' => $this->serviceName,
-            'service_version' => $this->serviceVersion,
             'project_id' => $this->projectId,
+            'telemetry_data' => [
+                'type' => 'user_context',
+                'user_data' => $userContext,
+                'timestamp' => microtime(true),
+            ],
+            'metadata' => [
+                'service_name' => $this->serviceName,
+                'service_version' => $this->serviceVersion,
+                'timestamp' => microtime(true),
+            ],
         ]);
     }
 
@@ -412,13 +423,18 @@ final class TelemetryService
     public function setExtraContext(string $key, $value): void
     {
         $this->collectData([
-            'type' => 'extra_context',
-            'key' => $key,
-            'value' => $value,
-            'timestamp' => microtime(true),
-            'service_name' => $this->serviceName,
-            'service_version' => $this->serviceVersion,
             'project_id' => $this->projectId,
+            'telemetry_data' => [
+                'type' => 'extra_context',
+                'key' => $key,
+                'value' => $value,
+                'timestamp' => microtime(true),
+            ],
+            'metadata' => [
+                'service_name' => $this->serviceName,
+                'service_version' => $this->serviceVersion,
+                'timestamp' => microtime(true),
+            ],
         ]);
     }
 
@@ -428,13 +444,18 @@ final class TelemetryService
     public function setTag(string $key, string $value): void
     {
         $this->collectData([
-            'type' => 'tag',
-            'key' => $key,
-            'value' => $value,
-            'timestamp' => microtime(true),
-            'service_name' => $this->serviceName,
-            'service_version' => $this->serviceVersion,
             'project_id' => $this->projectId,
+            'telemetry_data' => [
+                'type' => 'tag',
+                'key' => $key,
+                'value' => $value,
+                'timestamp' => microtime(true),
+            ],
+            'metadata' => [
+                'service_name' => $this->serviceName,
+                'service_version' => $this->serviceVersion,
+                'timestamp' => microtime(true),
+            ],
         ]);
     }
 }
