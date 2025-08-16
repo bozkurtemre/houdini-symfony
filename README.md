@@ -1,9 +1,6 @@
 # Houdini Symfony Bundle
 
-[![Latest Stable Version](http://poser.pugx.org/bozkurtemre/houdini-symfony/v)](https://packagist.org/packages/bozkurtemre/houdini-symfony)
-[![Total Downloads](http://poser.pugx.org/bozkurtemre/houdini-symfony/downloads)](https://packagist.org/packages/bozkurtemre/houdini-symfony)
-[![Latest Unstable Version](http://poser.pugx.org/bozkurtemre/houdini-symfony/v/unstable)](https://packagist.org/packages/bozkurtemre/houdini-symfony)
-[![License](http://poser.pugx.org/bozkurtemre/houdini-symfony/license)](https://packagist.org/packages/bozkurtemre/houdini-symfony)
+[![Latest Stable Version](http://poser.pugx.org/houdini/houdini-symfony/v)](https://packagist.org/packages/houdini/houdini-symfony) [![Total Downloads](http://poser.pugx.org/houdini/houdini-symfony/downloads)](https://packagist.org/packages/houdini/houdini-symfony) [![Latest Unstable Version](http://poser.pugx.org/houdini/houdini-symfony/v/unstable)](https://packagist.org/packages/houdini/houdini-symfony) [![License](http://poser.pugx.org/houdini/houdini-symfony/license)](https://packagist.org/packages/houdini/houdini-symfony) [![PHP Version Require](http://poser.pugx.org/houdini/houdini-symfony/require/php)](https://packagist.org/packages/houdini/houdini-symfony)
 
 
 A Symfony bundle that acts as a telemetry collection wrapper, automatically collecting telemetry data (traces, metrics, logs, exceptions) and posting them to a configurable backend via DSN configuration, similar to Sentry's approach.
